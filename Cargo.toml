@@ -1,0 +1,60 @@
+[package]
+name = "actix-example"
+version = "0.1.0"
+authors = ["Federico Garcia Ronca <fedemv@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+#config
+gumdrop = "0.8.0"
+lazy_static = "1.4.0"
+version = "3.0.0"
+
+#serialization
+serde = "1.0"
+serde_json = "1.0"
+serde_derive = "1.0"
+
+##db
+cdrs = "3.0.0-beta.2"
+cdrs_helpers_derive = "0.3.3"
+uuid = {version = "0.8", features = ["serde"]}
+time = "0.2"
+
+##log
+env_logger = "0.7.1"
+
+tracing = {version = "0.1.16", features = ["log"]}
+tracing-log = {version = "0.1.1", features = ["env_logger"]}
+tracing-subscriber = "0.2.7"
+tracing-futures = "0.2.4"
+
+##http/https
+actix-http = "2.0.0-beta.3"
+actix-web = "3.0.0-beta.3"
+actix-rt = "1.1.1"
+failure = "0.1.8"
+dotenv = "0.15.0"
+
+##network
+dns-lookup = "1.0.3"
+
+##date && time
+chrono = {version = "0.4.13", features = ["serde"]}
+
+##logs
+hostname = "0.3.1"
+
+#util
+fomat-macros = "0.3.1"
+itertools = "0.9.0"
+
+#metrics
+prometheus = "0.9.0"
+
+[dependencies.hocon]
+version = "0.3.4"
+default-features = false
+features = ["serde-support"]

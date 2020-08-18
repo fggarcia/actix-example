@@ -1,0 +1,9 @@
+*.tar
+*.gz
+.vscode
+/target
+/examples/target
+**/*.rs.bk
+.idea
+/.idea/
+actix-example.iml
