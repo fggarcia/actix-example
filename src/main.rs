@@ -44,7 +44,7 @@ async fn main() -> io::Result<()> {
     let _subscriber = tracing_subscriber::fmt()
         // all spans/events with a level higher than TRACE (e.g, debug, info, warn, etc.)
         // will be written to stdout.
-        .compact()
+        //.compact()
         .with_max_level(config.log_config.log_level.parse::<Level>().unwrap())
         // completes the builder and sets the constructed `Subscriber` as the default.
         .init();
@@ -91,10 +91,10 @@ async fn main() -> io::Result<()> {
                 web::get().to(routes::health_check::version),
             )
     })
-        .bind(format!("{}:{}", config.server.host, config.server.port))?
-        //.keep_alive(KeepAlive::Timeout(config.server.keep_alive))
-        .keep_alive(KeepAlive::Os)
-        .system_exit()
-        .run()
-        .await
+    .bind(format!("{}:{}", config.server.host, config.server.port))?
+    //.keep_alive(KeepAlive::Timeout(config.server.keep_alive))
+    .keep_alive(KeepAlive::Os)
+    .system_exit()
+    .run()
+    .await
 }

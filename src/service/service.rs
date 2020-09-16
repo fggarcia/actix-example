@@ -2,12 +2,14 @@ use crate::errors::errors::AppError;
 use crate::store::mock_store;
 use crate::store::model::store::Store;
 
-use tracing::{debug, error};
-use crate::api::query::DomainQuery;
 use crate::api::domain::Domain;
+use crate::api::query::DomainQuery;
+use tracing::{debug, error};
 
 pub async fn query(store: &Store, query: &DomainQuery) -> Result<Vec<usize>, AppError> {
     let selected_store = &store.mock_store;
+
+    debug!("debugging : {:?}", query);
 
     mock_store::select(selected_store, query).await
 }
