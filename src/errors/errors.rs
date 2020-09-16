@@ -2,11 +2,13 @@ use actix_web::{error::ResponseError, http::StatusCode, HttpResponse};
 use cdrs::error::Error as CDRSError;
 use serde::Serialize;
 use std::fmt;
+use async_std::future::TimeoutError;
 
 #[derive(Debug)]
 pub enum AppErrorType {
     DbError,
     NotFoundError,
+    TimeOutError,
 }
 
 #[derive(Debug)]
@@ -43,6 +45,16 @@ impl From<CDRSError> for AppError {
     }
 }
 
+impl From<TimeoutError> for AppError {
+    fn from(error: TimeoutError) -> AppError {
+        AppError {
+            message: None,
+            cause: Some(error.to_string()),
+            error_type: AppErrorType::TimeOutError,
+        }
+    }
+}
+
 impl fmt::Display for AppError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         write!(f, "{:?}", self)
@@ -59,6 +71,7 @@ impl ResponseError for AppError {
         match self.error_type {
             AppErrorType::DbError => StatusCode::INTERNAL_SERVER_ERROR,
             AppErrorType::NotFoundError => StatusCode::NOT_FOUND,
+            AppErrorType::TimeOutError => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 

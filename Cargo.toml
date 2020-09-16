@@ -55,3 +55,7 @@ itertools = "0.9.0"
 version = "0.3.4"
 default-features = false
 features = ["serde-support"]
+
+[dependencies.async-std]
+version = "1.6.3"
+features = ["tokio02","std"]
