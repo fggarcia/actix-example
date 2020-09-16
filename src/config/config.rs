@@ -18,9 +18,19 @@ pub struct LogConfig {
 }
 
 #[derive(Deserialize, Clone, Debug)]
+pub struct ScyllaConfig {
+    pub keyspace: String,
+    pub user: String,
+    pub password: String,
+    pub hosts: Vec<String>,
+    pub port: i16,
+}
+
+#[derive(Deserialize, Clone, Debug)]
 pub struct Config {
     pub server: ServerConfig,
     pub log_config: LogConfig,
+    pub scylla_config: ScyllaConfig,
 }
 
 impl Config {

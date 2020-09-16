@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  actix-scylla:
+    image: scylladb/scylla:4.1.6
+    container_name: actix-scylla
+    restart: always
+    command: --smp 4 --overprovisioned 1 --api-address 0.0.0.0
+    ports:
+      - '7000:7000'
+      - '7001:7001'
+      - '7199:7199'
+      - '9042:9042'
+      - '9160:9160'
+    deploy:
+      resources:
+        limits:
+          memory: '2048M'
+          cpus: '4'
+    volumes: ##https://github.com/scylladb/scylla/blob/master/conf/scylla.yaml
+      - ./scylla/scylla.yaml:/etc/scylla/scylla.yaml
+      - ./scylla/schema.cql:/tmp/schema.cql
+    networks:
+      - actix_network
+
+
+networks:
+  actix_network:
+    name: actix-network
+    driver: bridge

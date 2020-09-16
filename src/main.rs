@@ -82,6 +82,11 @@ async fn main() -> io::Result<()> {
                     .route(web::post().to(routes::example::post))
                     .route(web::get().to(routes::example::query)),
             )
+            .service(
+                web::resource("/actix-example/store")
+                    .route(web::post().to(routes::store::post))
+                    .route(web::get().to(routes::store::query)),
+            )
             .route(
                 "/actix-example/health-check",
                 web::get().to(routes::health_check::health_check),

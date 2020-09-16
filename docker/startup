@@ -1,0 +1,20 @@
+#!/bin/bash
+
+docker-compose up -d
+
+echo 'waiting create schema....'
+
+while true
+do
+    sleep 10
+    echo 'checking scylla status.....'
+    SCYLLA_INITIALIZE=$(docker-compose logs actix-scylla | grep 'initialization completed' | wc -l)
+    if [[ $SCYLLA_INITIALIZE -gt 0 ]]; then
+        echo 'scylla complete initialize'
+        break
+    fi
+done
+
+echo 'Adding schema to scylla'
+docker exec -it actix-scylla cqlsh -u cassandra -p cassandra -f /tmp/schema.cql
+echo 'Added schema'
