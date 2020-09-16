@@ -34,5 +34,5 @@ rustup override set nightly
 
 #### startup app
 ```
-RUST_LOG=debug RUSTFLAGS="sanitizer=thread" cargo run --target x86_64-unknown-linux-gnu
+RUST_LOG=debug RUSTFLAGS="-Zsanitizer=thread" cargo run --target x86_64-unknown-linux-gnu
 ```
