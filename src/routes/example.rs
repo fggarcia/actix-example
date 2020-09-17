@@ -9,7 +9,7 @@ use crate::util::vec_helper::empty_resource;
 use actix_http::http::HeaderValue;
 use actix_web::{web, HttpRequest, HttpResponse, Responder, Result};
 use std::sync::Arc;
-use tracing::info_span;
+use tracing::{info, info_span};
 use tracing_futures::Instrument;
 use crate::api::query::DomainQuery;
 
@@ -50,19 +50,21 @@ pub async fn query(
     let response_f = async move {
         example_service::query(&state.store, &domain_query)
             .await
-            .map(|elems| empty_resource(elems, "No routes found".to_string()))?
-            .map(|elems| {
-                HttpResponse::Ok()
-                    .json(elems)
-                    .with_header("X-Service", HeaderValue::from_static("GET/actix-example"))
-            })
+            .map(|elems| empty_resource(elems, "No routes found".to_string()))
+            .map(|r| r.unwrap())
             .map_err(log_error())
     };
 
-    response_f
+    let response = response_f
         .instrument(info_span!(
             GET,
             %user_context
         ))
-        .await
+        .await?;
+
+    info!("before return from: {:?} {:?}", response, std::thread::current().name());
+
+    Ok(HttpResponse::Ok()
+        .json(response)
+        .with_header("X-Service", HeaderValue::from_static("GET/actix-example")))
 }

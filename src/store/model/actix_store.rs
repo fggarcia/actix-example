@@ -81,8 +81,12 @@ fn select_query_values(store: &ActixStore, query: StoreModelQuery) -> (QueryPara
 async fn query_fn(store: Arc<ActixStore>,
                   query_str: &str, query_values: QueryParams) -> std::result::Result<Option<Vec<Row>>, AppError> {
     let result = async_std::future::timeout(Duration::from_millis(50), store.current_session.query_with_params(query_str, query_values))
-        .await??.get_body()?.into_rows();
-    Ok(result)
+        .await?
+        .map(|res| res.get_body())?;
+
+    result
+        .map(|body| body.into_rows())
+        .map_err(|err|err.into())
 }
 
 pub async fn select(
