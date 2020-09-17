@@ -10,11 +10,13 @@ use std::sync::Arc;
 pub async fn query(store: Arc<ActixStore>, query: StoreModelQuery) -> Result<Vec<StoreModel>, AppError> {
     debug!("debugging : {:?}", query);
 
-    actix_store::select(store, query).await
+    let r = actix_store::select(store, query).await
         .map_err(|err| {
-            error!("error {:?}", err);
+            error!("error {:?} {:?}", err, std::thread::current().name());
             err
-        })
+        });
+
+    r
 }
 
 pub async fn store(store: &Store, elem: StoreModel) -> Result<(), AppError> {

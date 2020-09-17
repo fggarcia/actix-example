@@ -3,6 +3,7 @@ use cdrs::error::Error as CDRSError;
 use serde::Serialize;
 use std::fmt;
 use async_std::future::TimeoutError;
+use tracing::error;
 
 #[derive(Debug)]
 pub enum AppErrorType {
@@ -30,7 +31,10 @@ impl AppError {
                 error_type: AppErrorType::NotFoundError,
                 ..
             } => "The request resource was not found".to_string(),
-            _ => "An unexpected error has occurred".to_string(),
+            _ => {
+                error!("something {:?}", std::thread::current().name());
+                "An unexpected error has occurred".to_string()
+            },
         }
     }
 }

@@ -60,7 +60,7 @@ pub fn log_error() -> impl Fn(AppError) -> AppError {
         //let log = log.new(o!(
         //    "cause" => err.cause.clone()
         //));
-        error!("{}", err.message());
+        error!("{} {:?}", err.message(), std::thread::current().name());
         err
     }
 }

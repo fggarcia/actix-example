@@ -9,7 +9,7 @@ use crate::util::vec_helper::empty_resource;
 use actix_http::http::HeaderValue;
 use actix_web::{web, HttpRequest, HttpResponse, Responder, Result};
 use std::sync::Arc;
-use tracing::info_span;
+use tracing::{info, info_span};
 use tracing_futures::Instrument;
 
 const POST_SEARCH: &str = "/POST/actix-example/store";
@@ -37,6 +37,7 @@ pub async fn post(
         .with_header("X-Service", HeaderValue::from_static("POST/actix-example")))
 }
 
+
 pub async fn query(
     req: HttpRequest,
     state: web::Data<Arc<AppState>>,
@@ -51,24 +52,21 @@ pub async fn query(
     let response_f = async move {
         store_service::query(store, store_query)
             .await
-            .map(|elems| empty_resource(elems, "No routes found".to_string()))?
-            .map(|elems| {
-                HttpResponse::Ok()
-                    .json(elems)
-                    .with_header("X-Service", HeaderValue::from_static("GET/actix-example"))
-            })
+            .map(|elems| empty_resource(elems, "No routes found".to_string()))
+            .map(|r| r.unwrap())
             .map_err(log_error())
     };
-    /*
+
     let response = response_f
         .instrument(info_span!(
             GET,
             %user_context
         ))
-        .await;
-     */
-    let response = response_f
-        .await;
+        .await?;
 
-    response
+    info!("before return from: {:?} {:?}", response, std::thread::current().name());
+
+    Ok(HttpResponse::Ok()
+        .json(response)
+        .with_header("X-Service", HeaderValue::from_static("GET/actix-example")))
 }
