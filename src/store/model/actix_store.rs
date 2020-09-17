@@ -78,21 +78,21 @@ fn select_query_values(store: &ActixStore, query: StoreModelQuery) -> (QueryPara
     (query_params.finalize(), store.select_query.clone())
 }
 
-async fn query_fn(store: &ActixStore,
-                  query_str: String, query_values: QueryParams) -> std::result::Result<Option<Vec<Row>>, AppError> {
-    let result = async_std::future::timeout(Duration::from_secs(1), store.current_session.query_with_params(query_str, query_values))
+async fn query_fn(store: Arc<ActixStore>,
+                  query_str: &str, query_values: QueryParams) -> std::result::Result<Option<Vec<Row>>, AppError> {
+    let result = async_std::future::timeout(Duration::from_millis(50), store.current_session.query_with_params(query_str, query_values))
         .await??.get_body()?.into_rows();
     Ok(result)
 }
 
 pub async fn select(
-    store: &ActixStore,
+    store: Arc<ActixStore>,
     query: StoreModelQuery,
 ) -> std::result::Result<Vec<StoreModel>, AppError> {
     let (query_values, query_str) = select_query_values(&store, query);
 
     let rows_result =
-        query_fn(store, query_str, query_values).await?
+        query_fn(store, query_str.as_str(), query_values).await?
         .ok_or(AppError {
             cause: None,
             message: Some("error retrieving rows".to_string()),

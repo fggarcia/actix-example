@@ -46,8 +46,10 @@ pub async fn query(
 
     let store_query: StoreModelQuery = query.0.into();
 
+    let store = state.store.actix_store.clone();
+
     let response_f = async move {
-        store_service::query(&state.store, store_query)
+        store_service::query(store, store_query)
             .await
             .map(|elems| empty_resource(elems, "No routes found".to_string()))?
             .map(|elems| {
@@ -57,11 +59,16 @@ pub async fn query(
             })
             .map_err(log_error())
     };
-
-    response_f
+    /*
+    let response = response_f
         .instrument(info_span!(
             GET,
             %user_context
         ))
-        .await
+        .await;
+     */
+    let response = response_f
+        .await;
+
+    response
 }

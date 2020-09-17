@@ -8,6 +8,6 @@ CREATE TABLE IF NOT EXISTS actix.actix (
     name text,
     reference text,
     num int,
-    num2 int
+    num2 int,
     PRIMARY KEY(name, reference)
 );
